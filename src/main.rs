@@ -3,13 +3,12 @@ use std::{
     io::Result,
 };
 
-use actix_web::{get, middleware::Logger, web, App, HttpServer, Responder};
+use actix_web::{middleware::Logger, App, HttpServer};
 use dotenv::dotenv;
+use routes::home_routes;
 
-#[get("/health/{name}")]
-async fn health(name: web::Path<String>) -> impl Responder {
-    format!("Hello {name}")
-}
+mod routes;
+mod utils;
 
 #[actix_web::main]
 async fn main() -> Result<()> {
@@ -20,8 +19,15 @@ async fn main() -> Result<()> {
     dotenv().ok();
     env_logger::init();
 
-    HttpServer::new(|| App::new().wrap(Logger::default()).service(health))
-        .bind(("127.0.0.1", 8080))?
-        .run()
-        .await
+    let address = (utils::constants::ADDRESS).clone();
+    let port = (utils::constants::PORT).clone();
+
+    HttpServer::new(|| {
+        App::new()
+            .wrap(Logger::default())
+            .configure(home_routes::config)
+    })
+    .bind((address, port))?
+    .run()
+    .await
 }

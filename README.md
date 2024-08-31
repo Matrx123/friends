@@ -1,1 +1,1 @@
-Trying to write socket.io features in rust , which will implement something like socket.io lib does in nodejs
+Template to start a new server application including routes, middleware, utills, etc..
